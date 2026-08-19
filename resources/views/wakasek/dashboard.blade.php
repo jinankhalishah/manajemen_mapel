@@ -338,6 +338,10 @@
 
                 @forelse($laporanTerbaru as $item)
 
+                    @php
+                        /** @var \App\Models\Laporan $item */
+                    @endphp
+
                     <div class="flex items-center justify-between gap-3 py-2 {{ !$loop->last ? 'border-b border-gray-50' : '' }}">
 
                         <div class="min-w-0">

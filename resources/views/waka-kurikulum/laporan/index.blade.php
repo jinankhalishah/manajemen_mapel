@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <div class="flex justify-between items-center gap-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Laporan Pengajaran
             </h2>
@@ -39,7 +39,7 @@
 
             <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
 
-                <div class="px-6 py-4 border-b border-gray-200 flex flex-wrap items-center justify-between gap-4">
+                <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-wrap items-center justify-between gap-4">
 
                     <h3 class="font-semibold text-gray-800">
                         Daftar Laporan
@@ -47,9 +47,9 @@
 
                     <div class="flex flex-wrap items-center gap-3">
 
-                        <form method="GET" action="{{ route('laporan.index') }}" class="flex flex-wrap items-center gap-2">
+                        <form method="GET" action="{{ route('laporan.index') }}" class="flex flex-col w-full gap-2 sm:flex-row sm:flex-wrap sm:items-center">
 
-                            <div class="relative">
+                            <div class="relative w-full sm:w-auto">
                                 <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
@@ -58,14 +58,14 @@
                                     name="q"
                                     value="{{ request('q') }}"
                                     placeholder="Cari judul / keterangan..."
-                                    class="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    class="w-full sm:w-56 pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                 >
                             </div>
 
                             <select
                                 name="jenis"
                                 onchange="this.form.submit()"
-                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                class="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             >
                                 <option value="">Semua Jenis</option>
                                 @foreach(['Mata Pelajaran', 'Distribusi Pengajaran', 'Jadwal'] as $j)
@@ -78,7 +78,7 @@
                             <select
                                 name="tahun_ajaran_id"
                                 onchange="this.form.submit()"
-                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                class="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             >
                                 <option value="">Semua Tahun Ajaran</option>
                                 @foreach($tahunAjaran as $ta)
@@ -90,7 +90,7 @@
                             </select>
 
                             <button type="submit"
-                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">
+                                    class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">
                                 Cari
                             </button>
 
@@ -111,7 +111,7 @@
 
                 </div>
 
-                <div class="overflow-x-auto">
+                <div class="hidden md:block overflow-x-auto">
 
                     <table class="w-full border-collapse">
 
@@ -130,6 +130,10 @@
                         <tbody class="divide-y divide-gray-100">
 
                             @forelse($laporan as $item)
+
+                                @php
+                                    /** @var \App\Models\Laporan $item */
+                                @endphp
 
                                 <tr class="hover:bg-gray-50 transition">
 
@@ -256,9 +260,122 @@
 
                 </div>
 
+                <div class="md:hidden divide-y divide-gray-100">
+
+                    @forelse($laporan as $item)
+
+                        @php
+                            /** @var \App\Models\Laporan $item */
+                            $colors = [
+                                'Mata Pelajaran' => 'bg-indigo-50 text-indigo-700',
+                                'Distribusi Pengajaran' => 'bg-purple-50 text-purple-700',
+                                'Jadwal' => 'bg-cyan-50 text-cyan-700',
+                            ];
+                        @endphp
+
+                        <div class="p-4">
+
+                            <div class="flex items-start justify-between gap-3">
+
+                                <div class="min-w-0">
+
+                                    <p class="text-sm font-medium text-gray-800">
+                                        {{ $item->judul }}
+                                    </p>
+
+                                    @if($item->keterangan)
+                                        <p class="text-xs text-gray-500 mt-0.5">
+                                            {{ $item->keterangan }}
+                                        </p>
+                                    @endif
+
+                                </div>
+
+                                <span class="shrink-0 inline-flex px-2.5 py-1 text-xs font-medium rounded-full {{ $colors[$item->jenis] ?? 'bg-gray-100 text-gray-700' }}">
+                                    {{ $item->jenis }}
+                                </span>
+
+                            </div>
+
+                            <div class="mt-3 space-y-1 text-sm">
+
+                                <p class="text-gray-600">
+                                    <span class="text-gray-400">Tahun Ajaran:</span> {{ $item->tahunAjaran?->tahun }}
+                                </p>
+
+                                <p class="text-gray-600">
+                                    <span class="text-gray-400">Pembuat:</span> {{ $item->user?->name }}
+                                </p>
+
+                                <p class="text-gray-600">
+                                    <span class="text-gray-400">Tanggal:</span> {{ $item->created_at->format('d M Y') }}
+                                </p>
+
+                            </div>
+
+                            <div class="mt-3 flex flex-wrap items-center gap-2">
+
+                                @if($item->file)
+
+                                    <a href="{{ Storage::url($item->file) }}"
+                                       target="_blank"
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                        Download
+                                    </a>
+
+                                @endif
+
+                                <form action="{{ route('laporan.destroy', $item) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('Yakin ingin menghapus laporan ini?')">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        Hapus
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    @empty
+
+                        <div class="p-4">
+                            <div class="flex flex-col items-center gap-3 py-8">
+                                <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </div>
+                                <p class="text-sm text-gray-500">
+                                    Belum ada data laporan.
+                                </p>
+                                <a href="{{ route('laporan.create') }}"
+                                   class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                    Tambah Laporan
+                                </a>
+                            </div>
+                        </div>
+
+                    @endforelse
+
+                </div>
+
                 @if($laporan->hasPages())
 
-                    <div class="px-6 py-4 border-t border-gray-200">
+                    <div class="px-4 sm:px-6 py-4 border-t border-gray-200">
                         {{ $laporan->links() }}
                     </div>
 

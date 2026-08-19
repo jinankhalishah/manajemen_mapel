@@ -19,17 +19,31 @@
 
 <body class="font-sans antialiased bg-gray-100">
 
-    <div class="min-h-screen flex">
+    <div class="min-h-screen flex" x-data="{ open: false }" @keydown.escape.window="open = false">
+
+        <!-- MOBILE BACKDROP -->
+
+        <div
+            x-show="open"
+            x-transition:opacity
+            @click="open = false"
+            style="display: none;"
+            class="fixed inset-0 z-30 bg-gray-900/50 lg:hidden"
+        ></div>
 
         <!-- SIDEBAR -->
 
-        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+        <aside
+            :class="open ? 'translate-x-0' : '-translate-x-full'"
+            @click="open = false"
+            class="fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static"
+        >
 
             <!-- Logo -->
 
             <div class="h-16 flex items-center px-6 border-b border-gray-200">
 
-                <a href="{{ route('dashboard') }}">
+                <a href="{{ route('dashboard') }}" @click="open = false">
 
                     <span class="text-xl font-bold text-gray-800">
                         Manajemen Mapel
@@ -295,9 +309,20 @@
 
             <!-- TOPBAR -->
 
-            <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+            <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6">
 
-                <div>
+                <div class="flex items-center gap-3 min-w-0">
+
+                    <button
+                        @click="open = true"
+                        type="button"
+                        class="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
+                    >
+                        <span class="sr-only">Buka menu</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
 
                     @isset($header)
 
@@ -308,7 +333,7 @@
                 </div>
 
 
-                <div class="text-sm text-gray-500">
+                <div class="text-sm text-gray-500 hidden sm:block">
 
                     {{ now()->translatedFormat('l, d F Y') }}
 
@@ -319,7 +344,7 @@
 
             <!-- CONTENT -->
 
-            <main class="flex-1 p-6">
+            <main class="flex-1 p-4 sm:p-6">
 
                 {{ $slot }}
 
